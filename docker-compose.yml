@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  api:
+    image: estudo_hateoas/estudo_hateoas:latest
+    user: "1001:1001"
+    build:
+      context: .
+      target: dev
+    container_name: api
+    restart: unless-stopped
+    env_file:
+      - docker/docker-compose-env/application.env
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - estudo_hateoas
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/:/etc/nginx/conf.d/
+    networks:
+      - estudo_hateoas
+    depends_on:
+      - ecidade-api
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: estudo_hateoas
+      POSTGRES_PASSWORD: teste69
+      POSTGRES_DB: estudo_hateoas_api
+    ports:
+      - "5431:5432"
+    volumes:
+      - "pgsql:/var/lib/postgresql/data"
+    restart: unless-stopped
+    networks:
+      - estudo_hateoas
+
+ 
+networks:
+  estudo_hateoas:
+    driver: bridge
+
+volumes:
+  pgsql:
+    driver: local
