@@ -1,15 +1,13 @@
 version: '3.8'
 services:
-  api:
+  hateoas-api:
     image: estudo_hateoas/estudo_hateoas:latest
     user: "1001:1001"
     build:
       context: .
       target: dev
-    container_name: api
+    container_name: hateoas-api
     restart: unless-stopped
-    env_file:
-      - docker/docker-compose-env/application.env
     volumes:
       - ./:/var/www/html
     networks:
@@ -27,7 +25,7 @@ services:
     networks:
       - estudo_hateoas
     depends_on:
-      - ecidade-api
+      - hateoas-api
 
   postgres:
     image: postgres
